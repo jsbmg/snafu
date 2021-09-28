@@ -17,7 +17,7 @@ const SEPARATOR: &str = " · ";                                // the separator 
 const TIME_FORMAT: &str = "%b %d %l:%M %p";                   // format for the time
 
 // available modules:
-// battery_capacity, battery_status, batter_all, wifi, time
+// battery_capacity, battery_status, battery_all, wifi, time
 const MODULES: [&str; 3] = ["battery_all", "wifi", "time"];   // order of modules
 
 
