@@ -8,7 +8,7 @@ use chrono::{Local};
 
 // configuration // 
 // device name overrides - use Some(<device name string>) to override manually
-// note: battery modules ommitted if battery dir not found
+// note: battery modules omitted if battery dir not found
 const BATTERY_NAME_OVERRIDE: Option<&str> = None;             
 const WIFI_DEVICE_OVERRIDE: Option<&str> = None;
 
