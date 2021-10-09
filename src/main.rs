@@ -141,7 +141,7 @@ fn add_modules() -> Vec<String> {
 		    Some(battery) => modules.push(battery),
 		    None => (),
 		}
-	    },
+	    }
 
 	    "battery_capacity" => {
 		match battery_capacity() {
@@ -164,7 +164,7 @@ fn add_modules() -> Vec<String> {
 		Ok(Some(ssid)) => modules.push(ssid),
 		Ok(None) => (),
 		Err(e) => modules.push(format!("WiFi: {}", e.to_string())),
-	    },
+	    }
 	
 	    "time" => modules.push(time()),
 
