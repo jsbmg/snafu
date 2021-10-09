@@ -5,7 +5,7 @@ use std::process::{Command, Stdio};
 
 use chrono::{Local};
 
-// configuration 
+// configuration
 const BATTERY_NAME_OVERRIDE: Option<&str> = None;     // the optional battery device name        
 const WIFI_DEVICE_OVERRIDE: Option<&str> = None;      // the optional wifi device name
 
