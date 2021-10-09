@@ -5,21 +5,16 @@ use std::process::{Command, Stdio};
 
 use chrono::{Local};
 
+// configuration 
+const BATTERY_NAME_OVERRIDE: Option<&str> = None;     // the optional battery device name        
+const WIFI_DEVICE_OVERRIDE: Option<&str> = None;      // the optional wifi device name
 
-// configuration // 
-// device name overrides - use Some(<device name string>) to override manually
-// note: battery modules omitted if battery dir not found
-const BATTERY_NAME_OVERRIDE: Option<&str> = None;             
-const WIFI_DEVICE_OVERRIDE: Option<&str> = None;
+const SEPARATOR: &str = " · ";                        // the separator between entries
+const TIME_FORMAT: &str = "%b %d %l:%M %p";           // format for the time
 
-// formatting 
-const SEPARATOR: &str = " · ";                                // the separator between entries
-const TIME_FORMAT: &str = "%b %d %l:%M %p";                   // format for the time
 
-// available modules:
-// battery_capacity, battery_status, battery_all, wifi, time
-const MODULES: [&str; 3] = ["battery_all", "wifi", "time"];   // order of modules
-
+// available modules: battery_capacity, battery_status, battery_all, wifi, time
+const MODULES: [&str; 3] = ["battery_all", "wifi", "time"];     // the order of modules
 
 // utilities //
 fn read_file(path: &str) -> Result<String, std::io::Error> {
@@ -135,7 +130,6 @@ fn time() -> String {
     now.format(TIME_FORMAT).to_string()
 }
 
-// implementation //
 fn add_modules() -> Vec<String> {
     let mut modules: Vec<String> = vec![];
     
