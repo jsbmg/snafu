@@ -18,14 +18,21 @@ const SEPARATOR: &str = " · ";
 // the format for the time
 const TIME_FORMAT: &str = "%b %d %l:%M %p";
 
-// utilities //
-fn read_file(path: &str) -> Result<String, std::io::Error> {
+// the order of modules (available: battery_capacity, battery_status, battery_all, wifi, time)
+const MODULES: [&str; 3] = ["battery_all", "wifi", "time"];
+
+// utilities
+fn read_file(path: &str) ->
+    Result<String, std::io::Error>
+{
     let mut contents = String::new();
     File::open(path)?.read_to_string(&mut contents)?;
     Ok(contents)
 }
 
-fn find_path_with_prefix(dir: &str, prefix: &str) -> Result<Option<String>, std::io::Error> {
+fn find_path_with_prefix(dir: &str, prefix: &str) ->
+    Result<Option<String>, std::io::Error>
+{
     for entry in std::fs::read_dir(dir)? {
 	let path = entry?.path();
 	let path_name = match path.file_name() {
@@ -41,7 +48,9 @@ fn find_path_with_prefix(dir: &str, prefix: &str) -> Result<Option<String>, std:
     Ok(None) 
 }
 
-fn read_battery_file(file: &str) -> Result<Option<String>, std::io::Error> {
+fn read_battery_file(file: &str) ->
+    Result<Option<String>, std::io::Error>
+{
     let battery_name;
     let power_supply_path = "/sys/class/power_supply";
     
@@ -60,8 +69,10 @@ fn read_battery_file(file: &str) -> Result<Option<String>, std::io::Error> {
     Ok(Some(info))
 }
 
-// components //
-fn battery_capacity() -> Result<Option<String>, std::io::Error> {
+// components
+fn battery_capacity() ->
+    Result<Option<String>, std::io::Error>
+{
     match read_battery_file("capacity") {
 	Ok(Some(capacity)) => Ok(Some(capacity)),
 	Ok(None) => Ok(None),
@@ -69,7 +80,9 @@ fn battery_capacity() -> Result<Option<String>, std::io::Error> {
     }
 }
 
-fn battery_status() -> Result<Option<String>, std::io::Error> {
+fn battery_status() ->
+    Result<Option<String>, std::io::Error>
+{
     match read_battery_file("status") {
 	Ok(Some(status)) => Ok(Some(status)),
 	Ok(None) => Ok(None),
@@ -77,7 +90,9 @@ fn battery_status() -> Result<Option<String>, std::io::Error> {
     }
 }
 
-fn battery_capacity_and_status() -> Option<String> {
+fn battery_capacity_and_status() ->
+    Option<String>
+{
     let mut result = String::new();
     
     match battery_capacity() {
@@ -98,7 +113,9 @@ fn battery_capacity_and_status() -> Option<String> {
     }
 }
     
-fn ssid() -> Result<Option<String>, Box<dyn error::Error>> {
+fn ssid() ->
+    Result<Option<String>, Box<dyn error::Error>>
+{
     let device_name;
     let ssid;
     
@@ -127,17 +144,20 @@ fn ssid() -> Result<Option<String>, Box<dyn error::Error>> {
     Ok(None)
 }
 
-fn time() -> String {
+fn time() ->
+    String
+{
     let now = Local::now();    
     now.format(TIME_FORMAT).to_string()
 }
 
-fn add_modules() -> Vec<String> {
+fn add_modules() ->
+    Vec<String>
+{
     let mut modules: Vec<String> = vec![];
     
     for module in MODULES {
-	match module {
-	    
+	match module {	    
 	    "battery_all" => {
 		match battery_capacity_and_status() {
 		    Some(battery) => modules.push(battery),
@@ -176,7 +196,8 @@ fn add_modules() -> Vec<String> {
     modules
 }
 
-fn main() {
+fn main()
+{
     let mut status_bar = String::new();
     let modules = add_modules();
     let num_modules = modules.len();
