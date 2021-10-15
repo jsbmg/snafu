@@ -6,15 +6,17 @@ use std::process::{Command, Stdio};
 use chrono::{Local};
 
 // configuration
-const BATTERY_NAME_OVERRIDE: Option<&str> = None;     // the optional battery device name        
-const WIFI_DEVICE_OVERRIDE: Option<&str> = None;      // the optional wifi device name
+// the optional battery device name        
+const BATTERY_NAME_OVERRIDE: Option<&str> = None;
 
-const SEPARATOR: &str = " · ";                        // the separator between entries
-const TIME_FORMAT: &str = "%b %d %l:%M %p";           // format for the time
+// the optional wifi device name
+const WIFI_DEVICE_OVERRIDE: Option<&str> = None;
 
+// the separator between entries
+const SEPARATOR: &str = " · ";
 
-// available modules: battery_capacity, battery_status, battery_all, wifi, time
-const MODULES: [&str; 3] = ["battery_all", "wifi", "time"];     // the order of modules
+// the format for the time
+const TIME_FORMAT: &str = "%b %d %l:%M %p";
 
 // utilities //
 fn read_file(path: &str) -> Result<String, std::io::Error> {
