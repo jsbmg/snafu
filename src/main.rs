@@ -197,23 +197,37 @@ fn add_modules() -> Vec<String> {
 }
 
 fn main() {
-    openbsd::wifi("iwm0").unwrap();
-    let mut status_bar = String::new();
+    let mut column_format = false;
+    let args: Vec<String> = env::args().collect();
+    for arg in args {
+        if arg == "--columns" {
+            column_format = true;
+        }
+    }
     let modules = add_modules();
     let num_modules = modules.len();
+    let mut status_bar = String::new();
 
     if num_modules == 0 {
         println!("Status: Empty");
     } else {
-        status_bar += " ";
-        for idx in 0..num_modules {
-            status_bar += &modules[idx];
-            if idx < num_modules - 1 {
-                status_bar += SEPARATOR;
+        if column_format == true {
+            for idx in 0..num_modules {
+                status_bar += &modules[idx];
+                if idx < num_modules - 1 {
+                    status_bar += "\n";
+                }
             }
+        } else {
+            status_bar += " ";
+            for idx in 0..num_modules {
+                status_bar += &modules[idx];
+                if idx < num_modules - 1 {
+                    status_bar += SEPARATOR;
+                }
+            }
+            status_bar += " ";
         }
-        status_bar += " ";
-
         println!("{}", status_bar);
     }
 }
