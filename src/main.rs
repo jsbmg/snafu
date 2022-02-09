@@ -1,9 +1,11 @@
-use std::error;
+use std::{env, error};
 use std::fs::File;
 use std::io::Read;
 use std::process::{Command, Stdio};
 
 use chrono::Local;
+
+mod openbsd;
 
 // configuration
 // the optional battery device name
@@ -23,6 +25,10 @@ const TIME_FORMAT: &str = "%b %d %l:%M %p";
 const MODULES: [&str; 3] = ["battery_all", "wifi", "time"];
 
 // utilities
+fn detect_os() -> String {
+    env::consts::OS.to_string()
+}
+
 fn read_file(path: &str) -> Result<String, std::io::Error> {
     let mut contents = String::new();
     File::open(path)?.read_to_string(&mut contents)?;
@@ -138,41 +144,60 @@ fn time() -> String {
 
 fn add_modules() -> Vec<String> {
     let mut modules: Vec<String> = vec![];
+    let os = detect_os();
 
-    for module in MODULES {
-        match module {
-            "battery_all" => match battery_capacity_and_status() {
-                Some(battery) => modules.push(battery),
-                None => (),
-            },
+    if os == "openbsd" {
+        for module in MODULES {
+            match module {
+                "battery_all" => match openbsd::battery_all() {
+                    Some(x) => modules.push(x),
+                    None => (),
+                },
+                "wifi" => match openbsd::wifi("iwm0") {
+                    Ok(x) => modules.push(x),
+                    Err(e) => modules.push(e.to_string()),
+                }
+                "time" => modules.push(time()),
+                &_ => (),
+            }
+        }
+    } else {
+        for module in MODULES {
+            match module {
+                "battery_all" => match battery_capacity_and_status() {
+                    Some(battery) => modules.push(battery),
+                    None => (),
+                },
 
-            "battery_capacity" => match battery_capacity() {
-                Ok(Some(battery)) => modules.push(battery),
-                Ok(None) => (),
-                Err(e) => modules.push(e.to_string()),
-            },
+                "battery_capacity" => match battery_capacity() {
+                    Ok(Some(battery)) => modules.push(battery),
+                    Ok(None) => (),
+                    Err(e) => modules.push(e.to_string()),
+                },
 
-            "battery_status" => match battery_status() {
-                Ok(Some(battery)) => modules.push(battery),
-                Ok(None) => (),
-                Err(e) => modules.push(e.to_string()),
-            },
+                "battery_status" => match battery_status() {
+                    Ok(Some(battery)) => modules.push(battery),
+                    Ok(None) => (),
+                    Err(e) => modules.push(e.to_string()),
+                },
 
-            "wifi" => match ssid() {
-                Ok(Some(ssid)) => modules.push(ssid),
-                Ok(None) => (),
-                Err(e) => modules.push(format!("WiFi: {}", e.to_string())),
-            },
+                "wifi" => match ssid() {
+                    Ok(Some(ssid)) => modules.push(ssid),
+                    Ok(None) => (),
+                    Err(e) => modules.push(format!("WiFi: {}", e.to_string())),
+                },
 
-            "time" => modules.push(time()),
+                "time" => modules.push(time()),
 
-            &_ => (),
+                &_ => (),
+            }
         }
     }
     modules
 }
 
 fn main() {
+    openbsd::wifi("iwm0").unwrap();
     let mut status_bar = String::new();
     let modules = add_modules();
     let num_modules = modules.len();
