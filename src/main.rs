@@ -115,7 +115,7 @@ fn ssid() -> Result<Option<String>, Box<dyn error::Error>> {
     if let Some(name) = WIFI_DEVICE_OVERRIDE {
         device_name = name.to_string();
     } else {
-        device_name = match find_path_with_prefix("/sys/class/net", "wlp") {
+        device_name = match find_path_with_prefix("/sys/class/net", "wl") {
             Ok(Some(x)) => x,
             Ok(None) => return Ok(None),
             Err(e) => return Err(Box::new(e)),
